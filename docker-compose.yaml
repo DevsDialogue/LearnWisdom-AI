@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  # Next.js (Frontend + Backend) service
+  frontend:
+    build: .
+    container_name: nextjs-app
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: ${DATABASE_URL} # Directly use DATABASE_URL
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
