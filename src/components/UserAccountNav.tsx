@@ -1,34 +1,37 @@
-'use client'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger , DropdownMenuItem,
-  DropdownMenuSeparator, } from './ui/dropdown-menu'
-import React from 'react'
-import { Button } from './ui/button'
-import {User } from 'next-auth'
+"use client";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "./ui/dropdown-menu";
+import React from "react";
+import { User } from "next-auth";
 import { signOut } from "next-auth/react";
 import { LogOut } from "lucide-react";
-import UserAvatar from './UserAvatar'
+import UserAvatar from "./UserAvatar";
 
 type Props = {
-  user: User ;
-}
+  user: User;
+};
 
-const UserAccountNav = ({user}: Props) => {
+const UserAccountNav = ({ user }: Props) => {
   return (
-   <DropdownMenu>
-    <DropdownMenuTrigger>
-      <UserAvatar user={user}/>
-        <Button>Open Menu</Button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent align='end'>
-        <div className='flex items-center justify-start gap-2 p-2 '>
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <UserAvatar user={user} />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <div className="flex items-center justify-start gap-2 p-2 ">
           <div className="flex flex-col space-y-1 leading-none">
-            {user?.name && <p className='font-medium '>{user.name}</p>}
+            {user?.name && <p className="font-medium ">{user.name}</p>}
             {user?.email && (
-              <p className='w-[200px]  truncate text-sm text-secondary-foreground'> 
+              <p className="w-[200px]  truncate text-sm text-secondary-foreground">
                 {user.email}
               </p>
             )}
-        </div>
+          </div>
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -40,10 +43,9 @@ const UserAccountNav = ({user}: Props) => {
           Sign out
           <LogOut className="w-4 h-4 ml-2" />
         </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
-    </DropdownMenuContent>
-   </DropdownMenu>
-  )
-}
-
-export default UserAccountNav
+export default UserAccountNav;
