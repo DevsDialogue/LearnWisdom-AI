@@ -20,6 +20,11 @@ npm i @radix-ui/react-avatar
 ```bash
 npm i next-themes
 ```
-
-
+5. **Prisma**
+```bash
+    npm install prisma --save-dev
+```
+```bash
+    npm install @prisma/client
+```
 
