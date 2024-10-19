@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images: {
-        domains: ["https://github.com/shadcn.png"]
-    }
+  reactStrictMode: true,
+  images: {
+    domains: ["lh3.googleusercontent.com"], // Add the domain for Google user profile images
+  },
 };
 
 export default nextConfig;
