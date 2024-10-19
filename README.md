@@ -30,11 +30,6 @@ npm i @radix-ui/react-avatar
 npm i next-themes
 ```
 
-```bash
-# Generate Nextauth secret(In Ubuntu)
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
-# Generate Nextauth secret(In Windows) if above command doesn't work
-node -e 'console.log(require("crypto").randomBytes(32).toString("hex"))'
 
 ```

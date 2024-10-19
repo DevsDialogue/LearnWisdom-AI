@@ -1,4 +1,7 @@
-"use client"; // Ensure this is at the top for client-side component
+'use client'
+import React from 'react'
+import { Button } from './ui/button'
+import { signIn } from "next-auth/react";
 
 import React from "react";
 import { Button } from "./ui/button"; // Assuming Button is a styled component
