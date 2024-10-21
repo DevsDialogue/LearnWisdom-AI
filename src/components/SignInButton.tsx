@@ -1,11 +1,7 @@
-'use client'
-import React from 'react'
-import { Button } from './ui/button'
-import { signIn } from "next-auth/react";
-
+"use client";
 import React from "react";
-import { Button } from "./ui/button"; // Assuming Button is a styled component
-import { signIn } from "next-auth/react"; // Client-side sign-in
+import { Button } from "./ui/button";
+import { signIn } from "next-auth/react";
 
 const SignInButton = () => {
   return (
