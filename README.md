@@ -2,6 +2,22 @@
 
 Building AI SaaS content generation web application
 
+**Database Commands**
+
+---
+
+```bash
+npx prisma db push
+```
+
+this is to see the database in localhost:
+
+```bash
+npx prisma studio
+```
+
+---
+
 ## Shadcn- dependencies
 
 1. **dropdown-menu**
@@ -48,4 +64,24 @@ npm install react-hook-form
 
 ```bash
 npm install @hookform/resolvers
+```
+
+```bash
+npx shadcn@latest add input
+```
+
+```bash
+npx shadcn@latest add separator
+```
+
+```bash
+npm install framer-motion
+```
+
+```bash
+npm install @google-cloud/aiplatform
+```
+
+```bash
+npm install openai@3.3.0
 ```

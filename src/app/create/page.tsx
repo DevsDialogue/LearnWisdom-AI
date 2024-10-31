@@ -1,10 +1,13 @@
 import CreateCourseForm from "@/components/CreateCourseForm";
 import { InfoIcon } from "lucide-react";
 import { redirect } from "next/navigation";
+import { getAuthSession } from "@/lib/auth";
 import React from "react";
 
-type Props = object;
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+type Props = {};
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CreatePage = async (props: Props) => {
   const session = await getAuthSession();
   if (!session?.user) {
