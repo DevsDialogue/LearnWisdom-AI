@@ -79,9 +79,13 @@ npm install framer-motion
 ```
 
 ```bash
-npm install @google-cloud/aiplatform
+npm install openai@3.3.0
 ```
 
 ```bash
-npm install openai@3.3.0
+npm i @tanstack/react-query
+```
+
+```bash
+npx shadcn@latest add toast
 ```

@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import { Provider } from "@/components/Providers";
+import { Toaster } from "@/components/ui/toaster";
 // import { Toaster } from "@/components/ui/toaster";
 
 const lexend = Lexend({ subsets: ["latin"] });
@@ -20,14 +21,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(lexend.className, "antialiased min-h-screen pt-16")}>
-      <Provider>
-          <Navbar /> 
+        <Provider>
+          <Navbar />
           {children}
-      </Provider>
-        
-          {/* <Toaster />
-       */}
-      </body> 
+          <Toaster />
+        </Provider>
+
+        {/* <Toaster />
+         */}
+      </body>
     </html>
   );
 }

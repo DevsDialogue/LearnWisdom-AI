@@ -1,5 +1,5 @@
 import React from "react";
-import { useForm } from "react-hook-form";
+import { useForm } from "react-hook-form"; // Ensure you are using the correct version of react-hook-form
 import {
   Form,
   FormControl,
@@ -8,21 +8,32 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { z } from "zod";
-import { CreateCourseFormSchema } from "@/validators/course";
+import { createChaptersSchema } from "@/validators/course";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "./ui/input";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { Button } from "./ui/button";
 import { Plus, Trash } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useMutation } from "@tanstack/react-query";
 
-type Props = object;
+// Ensure to specify props type correctly
+// type Props = {
+//   // Define any expected props here, if applicable
+// };
 
-type Input = z.infer<typeof CreateCourseFormSchema>;
+type Input = z.infer<typeof createChaptersSchema>; // Use the correct schema here
 
-const CreateCourseForm = (props: Props) => {
+const CreateCourseForm = () => {
+  const { mutate: createChapters, isLoading } = useMutation({
+    mutationFn: async ({ title, units }: Input) => {
+      const response = await axios.post("/api/course/createChapters");
+      return response.data;
+    },
+  });
+
   const form = useForm<Input>({
-    resolver: zodResolver(CreateCourseFormSchema),
+    resolver: zodResolver(createChaptersSchema), // Use the correct schema for validation
     defaultValues: {
       title: "",
       units: ["", "", ""],
@@ -30,7 +41,17 @@ const CreateCourseForm = (props: Props) => {
   });
 
   function onSubmit(data: Input) {
-    console.log(data);
+    if (data.units.some((unit) => unit === "")) {
+    }
+
+    createChapters(data, {
+      onSuccess: () => {
+        form.reset();
+      },
+      onError: (error) => {
+        console.error(error);
+      },
+    });
   }
 
   return (
@@ -67,13 +88,12 @@ const CreateCourseForm = (props: Props) => {
                   }}
                 >
                   <FormField
-                    key={index}
                     control={form.control}
                     name={`units.${index}`}
                     render={({ field }) => {
                       return (
                         <FormItem className="flex flex-col items-start w-full sm:items-center sm:flex-row">
-                          <FormLabel className=" flex-[1] text-xl">
+                          <FormLabel className="flex-[1] text-xl">
                             Unit {index + 1}
                           </FormLabel>
                           <FormControl className="flex-[0]">
@@ -111,10 +131,10 @@ const CreateCourseForm = (props: Props) => {
                 variant="secondary"
                 className="font-semibold ml-2"
                 onClick={() => {
-                  form.setValue("units", [
-                    ...form.watch("units").slice(0, -1),
-                    "",
-                  ]);
+                  const currentUnits = form.getValues("units");
+                  if (currentUnits.length > 0) {
+                    form.setValue("units", currentUnits.slice(0, -1));
+                  }
                 }}
               >
                 Remove Unit
@@ -123,7 +143,12 @@ const CreateCourseForm = (props: Props) => {
             </div>
             <Separator className="flex-[1]" />
           </div>
-          <Button type="submit" className="w-full mt-6" size="lg">
+          <Button
+            disabled={isLoading}
+            type="submit"
+            className="w-full mt-6"
+            size="lg"
+          >
             Let&apos;s Go
           </Button>
         </form>
