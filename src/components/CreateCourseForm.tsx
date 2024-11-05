@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { useForm } from "react-hook-form"; // Ensure you are using the correct version of react-hook-form
 import {
@@ -16,6 +17,9 @@ import { Button } from "./ui/button";
 import { Plus, Trash } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMutation } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 // Ensure to specify props type correctly
 // type Props = {
@@ -25,9 +29,14 @@ import { useMutation } from "@tanstack/react-query";
 type Input = z.infer<typeof createChaptersSchema>; // Use the correct schema here
 
 const CreateCourseForm = () => {
+  const router = useRouter();
+  const { toast } = useToast();
   const { mutate: createChapters, isLoading } = useMutation({
     mutationFn: async ({ title, units }: Input) => {
-      const response = await axios.post("/api/course/createChapters");
+      const response = await axios.post("/api/course/createChapters", {
+        title,
+        units,
+      });
       return response.data;
     },
   });
@@ -42,14 +51,28 @@ const CreateCourseForm = () => {
 
   function onSubmit(data: Input) {
     if (data.units.some((unit) => unit === "")) {
+      toast({
+        title: "Error",
+        description: "Please fill all the units",
+        variant: "destructive",
+      });
     }
 
     createChapters(data, {
-      onSuccess: () => {
-        form.reset();
+      onSuccess: (course_id) => {
+        toast({
+          title: "Success",
+          description: "Course created successfully",
+        });
+        router.push(`/create/${course_id}`);
       },
       onError: (error) => {
         console.error(error);
+        toast({
+          title: "Error",
+          description: "An error occurred while creating the course",
+          variant: "destructive",
+        });
       },
     });
   }
