@@ -89,3 +89,11 @@ npm i @tanstack/react-query
 ```bash
 npx shadcn@latest add toast
 ```
+
+```bash
+npm install youtube-transcript
+```
+
+```bash
+npx shadcn@latest add radio-group
+```
