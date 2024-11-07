@@ -97,3 +97,7 @@ npm install youtube-transcript
 ```bash
 npx shadcn@latest add radio-group
 ```
+
+```bash
+npm install stripe
+```
