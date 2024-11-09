@@ -20,7 +20,7 @@ export async function searchYoutube(searchQuery: string) {
 
 export async function getTranscript(videoId: string) {
   try {
-    let transcript_arr = await YoutubeTranscript.fetchTranscript(videoId, {
+    const transcript_arr = await YoutubeTranscript.fetchTranscript(videoId, {
       lang: "en",
       country: "India",
     });

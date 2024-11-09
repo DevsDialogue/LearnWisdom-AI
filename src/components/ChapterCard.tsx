@@ -4,7 +4,6 @@ import { Chapter } from "@prisma/client";
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import axios from "axios";
-import { on } from "events";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 
@@ -13,6 +12,7 @@ type Props = {
   chapterIndex: number;
   completedChapters: Set<string>;
   setCompletedChapters: React.Dispatch<React.SetStateAction<Set<string>>>;
+  isLoading: boolean;
 };
 
 export type ChapterCardHandler = {
@@ -20,7 +20,7 @@ export type ChapterCardHandler = {
 };
 
 const ChapterCard = React.forwardRef<ChapterCardHandler, Props>(
-  ({ chapter, chapterIndex, setCompletedChapters, completedChapters }, ref) => {
+  ({ chapter, setCompletedChapters }, ref) => {
     const { toast } = useToast();
     const [success, setSuccess] = React.useState<boolean | null>(null);
     const { mutate: getChapterInfro, isLoading } = useMutation({

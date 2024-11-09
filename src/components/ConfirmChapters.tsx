@@ -5,7 +5,6 @@ import ChapterCard, { ChapterCardHandler } from "./ChapterCard";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { Button, buttonVariants } from "./ui/button";
 import { ChevronLeft, ChevronRight, Link } from "lucide-react";
-import { set } from "zod";
 
 type Props = {
   course: Course & {

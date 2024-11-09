@@ -19,6 +19,7 @@ export const checkSubscription = async () => {
 
   const isValid =
     userSubscription.stripePriceId &&
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     userSubscription.stripeCurrentPeriodEnd?.getTime()! + DAY_IN_MS >
       Date.now();
 

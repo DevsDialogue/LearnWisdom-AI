@@ -1,4 +1,4 @@
-// /api/chapter/getInfo
+// /api/chapter/getInto
 
 import { prisma } from "@/lib/db";
 import { strict_output } from "@/lib/gpt";
@@ -7,18 +7,17 @@ import {
   getTranscript,
   searchYoutube,
 } from "@/lib/youtube";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const bodyParser = z.object({
   chapterId: z.string(),
 });
 
-export async function POST(req: Request, res: Response) {
+export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { chapterId } = bodyParser.parse(body);
-
     const chapter = await prisma.chapter.findUnique({
       where: {
         id: chapterId,
@@ -33,12 +32,14 @@ export async function POST(req: Request, res: Response) {
         { status: 404 }
       );
     }
-
     const videoId = await searchYoutube(chapter.youtubeSearchQuery);
-    const transcript = await getTranscript(videoId);
-
-    let maxLength = 500;
-    transcript = transcript.split(" ").slice(0, maxLength).join(" ");
+    let transcript = await getTranscript(videoId);
+    const maxLength = 500;
+    if (transcript) {
+      transcript = transcript.split(" ").slice(0, maxLength).join(" ");
+    } else {
+      throw new Error("Transcript is undefined");
+    }
 
     const { summary }: { summary: string } = await strict_output(
       "You are an AI capable of summarising a youtube transcript",
@@ -47,13 +48,13 @@ export async function POST(req: Request, res: Response) {
       { summary: "summary of the transcript" }
     );
 
-    const question = await getQuestionsFromTranscript(
+    const questions = await getQuestionsFromTranscript(
       transcript,
-      chapter.course_title
+      chapter.name
     );
 
     await prisma.question.createMany({
-      data: getQuestions.map((question) => {
+      data: questions.map((question) => {
         let options = [
           question.answer,
           question.option1,
@@ -71,9 +72,7 @@ export async function POST(req: Request, res: Response) {
     });
 
     await prisma.chapter.update({
-      where: {
-        id: chapterId,
-      },
+      where: { id: chapterId },
       data: {
         videoId: videoId,
         summary: summary,
@@ -81,12 +80,12 @@ export async function POST(req: Request, res: Response) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (e) {
-    if (e instanceof z.ZodError) {
+  } catch (error) {
+    if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid request body",
+          error: "Invalid body",
         },
         { status: 400 }
       );
@@ -94,7 +93,7 @@ export async function POST(req: Request, res: Response) {
       return NextResponse.json(
         {
           success: false,
-          error: "Unknown error",
+          error: "unknown",
         },
         { status: 500 }
       );

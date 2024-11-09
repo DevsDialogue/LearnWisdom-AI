@@ -2,9 +2,7 @@ import SubscriptionButton from "@/components/SubscriptionButton";
 import { checkSubscription } from "@/lib/subscription";
 import React from "react";
 
-type Props = {};
-
-const SettingsPage = async (props: Props) => {
+const SettingsPage = async () => {
   const isPro = await checkSubscription();
   return (
     <div className="py-8 mx-auto max-w-7xl">

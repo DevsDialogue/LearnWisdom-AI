@@ -6,9 +6,7 @@ import { Button } from "./ui/button";
 import { Zap } from "lucide-react";
 import axios from "axios";
 
-type Props = {};
-
-const SubscriptionAction = (props: Props) => {
+const SubscriptionAction = () => {
   const { data } = useSession();
   const [loading, setLoading] = React.useState(false);
   const handleSubscribe = async () => {

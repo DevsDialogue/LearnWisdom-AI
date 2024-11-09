@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { title, units } = createChaptersSchema.parse(body);
 
-    type outputUnits = {
+    type OutputUnits = {
       title: string;
       chapters: {
         title: string;
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     };
 
     // Generate chapters and YouTube search queries
-    const output_units: outputUnits = await strict_output(
+    const output_units: OutputUnits[] = await strict_output(
       "You are an AI capable of curating course content, coming up with relevant chapter titles, and finding relevant YouTube videos for each chapter",
       new Array(units.length).fill(
         `It is your job to create a course about ${title}. The user has requested to create chapters for each of the units. Then, for each chapter, provide a detailed YouTube search query that can be used to find an informational educational video for each chapter. Each query should give an educational informative course on YouTube.`

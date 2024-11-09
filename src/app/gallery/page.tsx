@@ -2,9 +2,7 @@ import GalleryCourseCard from "@/components/GalleryCourseCard";
 import { prisma } from "@/lib/db";
 import React from "react";
 
-type Props = {};
-
-const GalleryPage = async (props: Props) => {
+const GalleryPage = async () => {
   const courses = await prisma.course.findMany({
     include: {
       units: {

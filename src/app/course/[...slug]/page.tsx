@@ -30,8 +30,8 @@ const CoursePage = async ({ params: { slug } }: Props) => {
   if (!course) {
     return redirect("/gallery");
   }
-  let unitIndex = parseInt(unitIndexParam);
-  let chapterIndex = parseInt(chapterIndexParam);
+  const unitIndex = parseInt(unitIndexParam);
+  const chapterIndex = parseInt(chapterIndexParam);
 
   const unit = course.units[unitIndex];
   if (!unit) {

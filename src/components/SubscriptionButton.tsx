@@ -12,6 +12,7 @@ const SubscriptionButton = ({ isPro }: Props) => {
     try {
       const response = await axios.get("/api/stripe");
       window.location.href = response.data.url;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       console.log("billing error");
     } finally {

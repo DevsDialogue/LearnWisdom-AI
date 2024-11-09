@@ -1,7 +1,7 @@
 import ConfirmChapters from "@/components/ConfirmChapters";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { Info, InfoIcon } from "lucide-react";
+import { Info } from "lucide-react";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -11,7 +11,7 @@ type Props = {
   };
 };
 
-const createChapters = ({ params: { courseId } }: Props) => {
+const createChapters = async ({ params: { courseId } }: Props) => {
   const session = await getAuthSession();
   if (!session?.user) {
     return redirect("/gallery");
