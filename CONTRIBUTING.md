@@ -97,3 +97,7 @@ npx shadcn@latest add radio-group
 ```bash
 npm install stripe
 ```
+```bash
+npm install animated-tooltip
+```
+
