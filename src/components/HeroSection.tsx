@@ -11,17 +11,16 @@ export function HeroSection() {
 
   const handleGetStarted = async () => {
     if (!session) {
-      await signIn("google"); // Trigger Google sign-in
+      await signIn("google");
     } else {
-      router.push("/create"); // Redirect to /create if already signed in
+      router.push("/create");
     }
   };
 
   useEffect(() => {
-    // Only redirect to /create if user is signed in and not yet redirected
     if (session && !redirected) {
-      router.push("/create"); // Redirect to /create
-      setRedirected(true); // Prevent further redirects after first one
+      router.push("/create");
+      setRedirected(true);
     } else if (session) {
       router.push("/");
     }
