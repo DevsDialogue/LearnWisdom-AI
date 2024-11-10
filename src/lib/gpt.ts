@@ -9,7 +9,6 @@ const openai = new OpenAIApi(configuration);
 interface OutputFormat {
   [key: string]: string | string[] | OutputFormat;
 }
-
 export async function strict_output(
   system_prompt: string,
   user_prompt: string | string[],
@@ -57,7 +56,8 @@ export async function strict_output(
     });
 
     let res: string = response.data.choices[0].message?.content ?? "";
-    // Directly use the response without altering the quotes
+    console.log("Raw response from OpenAI:", res); // Log the raw response
+
     res = res.trim();
 
     if (verbose) {
@@ -70,8 +70,12 @@ export async function strict_output(
     }
 
     try {
+      // Attempt to sanitize the response to handle special cases
+      const sanitizedRes = res.replace(/\\([\"\\])/g, "$1"); // Remove unnecessary escape characters
+
+      // Try parsing the sanitized response
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let output: any = JSON.parse(res);
+      let output: any = JSON.parse(sanitizedRes);
 
       if (list_input) {
         if (!Array.isArray(output)) {

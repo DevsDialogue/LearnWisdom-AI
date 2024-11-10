@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { FaEnvelope, FaYoutube, FaGithub } from "react-icons/fa";
+import { FaEnvelope, FaGithub, FaTwitter } from "react-icons/fa";
 import { People } from "@/components/ui/people";
 
 export function Footer() {
@@ -33,18 +33,18 @@ export function Footer() {
           <div className="flex flex-col items-center md:items-end md:w-1/3 space-y-2">
             <div className="flex space-x-3 text-black dark:text-white">
               <a
-                href="mailto:Suraj.p.kumar@gmail.com"
+                href="mailto:suraj.ukumar.p@gmail.com"
                 className="hover:text-yellow-500"
               >
                 <FaEnvelope className="h-4 w-4" />
               </a>
               <a
-                href="https://www.youtube.com/@Surajkumar"
+                href="https://x.com/surajk_umar01"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-yellow-500"
               >
-                <FaYoutube className="h-4 w-4" />
+                <FaTwitter className="h-4 w-4" />
               </a>
               <a
                 href="https://github.com/DevsDialogue/LearnWisdom-AI"
