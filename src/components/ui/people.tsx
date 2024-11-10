@@ -7,30 +7,24 @@ const people = [
     id: 1,
     name: "Hritik Ranjan",
     designation: "Software Engineer",
-    image:
-      "/hritik.png",
+    image: "/hritik.png",
     link: "https://x.com/hritikranjan",
   },
 
   {
     id: 2,
-    name: "Suraj Kumar",
-    designation: "DevOps Engineer",
-    image:
-      "/suraj.jpeg",
-      link: "https://x.com/surajk_umar01",
+    name: "Suraj",
+    designation: "Cloud/DevOps Engineer",
+    image: "/suraj.jpeg",
+    link: "https://x.com/surajk_umar01",
   },
-    {
+  {
     id: 3,
     name: "Kumari Anjali",
     designation: "Software Engineer",
-    image:
-      "/anjali.jpeg",
+    image: "/anjali.jpeg",
     link: "https://www.linkedin.com/in/kumarianjali10/",
   },
-
-
-
 ];
 
 export function People() {
