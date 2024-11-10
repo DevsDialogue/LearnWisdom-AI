@@ -99,5 +99,5 @@ npm install stripe
 ```
 ```bash
 npm install animated-tooltip
-```
+``` 
 
