@@ -24,7 +24,7 @@ const ConfirmChapters = ({ course }: Props) => {
       chapterRefs[chapter.id] = React.useRef(null);
     });
   });
-  const [completedChapters, setCompletedChapters] = React.useState<Set<String>>(
+  const [completedChapters, setCompletedChapters] = React.useState<Set<string>>(
     new Set()
   );
   const totalChaptersCount = React.useMemo(() => {
