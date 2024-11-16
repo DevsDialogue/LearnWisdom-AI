@@ -4,11 +4,11 @@ import { prisma } from "./db";
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 export const checkSubscription = async () => {
-  const session = getAuthSession();
+  const session = await getAuthSession();
   if (!session?.user) {
     return false;
   }
-  const userSubscription = prisma.userSubscription.findUnique({
+  const userSubscription = await prisma.userSubscription.findUnique({
     where: {
       userId: session.user.id,
     },
@@ -18,9 +18,8 @@ export const checkSubscription = async () => {
   }
 
   const isValid =
-    userSubscription.stripePriceId &&
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    userSubscription.stripeCurrentPeriodEnd?.getTime()! + DAY_IN_MS >
+    userSubscription?.stripePriceId &&
+    (userSubscription?.stripeCurrentPeriodEnd?.getTime() ?? 0) + DAY_IN_MS >
       Date.now();
 
   return !!isValid;

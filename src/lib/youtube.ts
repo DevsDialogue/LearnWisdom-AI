@@ -22,7 +22,6 @@ export async function getTranscript(videoId: string) {
   try {
     const transcript_arr = await YoutubeTranscript.fetchTranscript(videoId, {
       lang: "en",
-      country: "India",
     });
     let transcript = "";
     for (const t of transcript_arr) {

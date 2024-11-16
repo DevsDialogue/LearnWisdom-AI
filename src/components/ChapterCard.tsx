@@ -22,7 +22,9 @@ const ChapterCard = React.forwardRef<ChapterCardHandler, Props>(
   ({ chapter, setCompletedChapters }, ref) => {
     const { toast } = useToast();
     const [success, setSuccess] = React.useState<boolean | null>(null);
-    const { mutate: getChapterInfro, isLoading } = useMutation({
+
+    // Define the mutation
+    const chapterMutation = useMutation({
       mutationFn: async () => {
         const response = await axios.post("/api/chapter/getInfo", {
           chapterId: chapter.id,
@@ -30,6 +32,10 @@ const ChapterCard = React.forwardRef<ChapterCardHandler, Props>(
         return response.data;
       },
     });
+
+    // Access mutate and isLoading from the mutation object
+    const { mutate: getChapterInfro } = chapterMutation;
+    const isLoading = chapterMutation.status === "pending";
 
     const addChapterIdToSet = React.useCallback(() => {
       setCompletedChapters((prev) => {

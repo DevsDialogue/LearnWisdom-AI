@@ -9,6 +9,7 @@ const openai = new OpenAIApi(configuration);
 interface OutputFormat {
   [key: string]: string | string[] | OutputFormat;
 }
+
 export async function strict_output(
   system_prompt: string,
   user_prompt: string | string[],
