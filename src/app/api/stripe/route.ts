@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"; // Mark this route as dynamic
+
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
