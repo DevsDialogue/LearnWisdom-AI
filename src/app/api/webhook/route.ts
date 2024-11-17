@@ -31,6 +31,7 @@ export async function POST(req: Request) {
     }
     await prisma.userSubscription.create({
       data: {
+        id: subscription.id,
         userId: session.metadata.userId,
         stripeSubscriptionId: subscription.id,
         stripeCustomerId: subscription.customer as string,

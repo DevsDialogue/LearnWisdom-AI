@@ -11,7 +11,7 @@ export async function GET() {
   try {
     const session = await getAuthSession();
     if (!session?.user) {
-      return new NextResponse("unauthorised", { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const userSubscription = await prisma.userSubscription.findUnique({
@@ -20,8 +20,8 @@ export async function GET() {
       },
     });
 
-    // cancel at the billing portal
-    if (userSubscription && userSubscription.stripeCustomerId) {
+    if (userSubscription?.stripeCustomerId) {
+      // Existing subscription: Provide access to Stripe billing portal
       const stripeSession = await stripe.billingPortal.sessions.create({
         customer: userSubscription.stripeCustomerId,
         return_url: settingsUrl,
@@ -29,7 +29,7 @@ export async function GET() {
       return NextResponse.json({ url: stripeSession.url });
     }
 
-    // user's first time subscribing
+    // First-time subscription: Create a Stripe Checkout session
     const stripeSession = await stripe.checkout.sessions.create({
       success_url: settingsUrl,
       cancel_url: settingsUrl,
@@ -43,9 +43,9 @@ export async function GET() {
             currency: "USD",
             product_data: {
               name: "Learning Journey Pro",
-              description: "unlimited course generation!",
+              description: "Unlimited course generation!",
             },
-            unit_amount: 2000,
+            unit_amount: 500,
             recurring: {
               interval: "month",
             },
@@ -57,9 +57,10 @@ export async function GET() {
         userId: session.user.id,
       },
     });
+
     return NextResponse.json({ url: stripeSession.url });
   } catch (error) {
-    console.log("[STRIPE ERROR]", error);
-    return new NextResponse("internal server error", { status: 500 });
+    console.error("[STRIPE ERROR]", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

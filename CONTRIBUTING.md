@@ -97,7 +97,22 @@ npx shadcn@latest add radio-group
 ```bash
 npm install stripe
 ```
+
 ```bash
 npm install animated-tooltip
-``` 
+```
 
+---
+
+## Stripe payment local testcase:
+
+```bash
+stripe login
+
+```
+
+```bash
+stripe listen --forward-to localhost:3000/api/webhook
+```
+
+### after running above command you'll get the Webhook secret key add it in the .env as `STRIPE_WEBHOOK_SECRET`
