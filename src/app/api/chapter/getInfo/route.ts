@@ -1,5 +1,3 @@
-// /api/chapter/getInto
-
 import { prisma } from "@/lib/db";
 import { strict_output } from "@/lib/gpt";
 import {
@@ -10,6 +8,7 @@ import {
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+// Validate the request body using Zod
 const bodyParser = z.object({
   chapterId: z.string(),
 });
@@ -18,11 +17,14 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { chapterId } = bodyParser.parse(body);
+
+    // Fetch the chapter
     const chapter = await prisma.chapter.findUnique({
       where: {
         id: chapterId,
       },
     });
+
     if (!chapter) {
       return NextResponse.json(
         {
@@ -32,27 +34,60 @@ export async function POST(req: Request) {
         { status: 404 }
       );
     }
+
+    // Search YouTube and fetch the transcript
     const videoId = await searchYoutube(chapter.youtubeSearchQuery);
+    if (!videoId) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "YouTube video not found",
+        },
+        { status: 404 }
+      );
+    }
+
     let transcript = await getTranscript(videoId);
     const maxLength = 500;
+
     if (transcript) {
       transcript = transcript.split(" ").slice(0, maxLength).join(" ");
     } else {
-      throw new Error("Transcript is undefined");
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Transcript not found or empty",
+        },
+        { status: 400 }
+      );
     }
 
-    const { summary }: { summary: string } = await strict_output(
-      "You are an AI capable of summarising a youtube transcript",
-      "summarise in 250 words or less and do not talk of the sponsors or anything unrelated to the main topic, also do not introduce what the summary is about.\n" +
-        transcript,
+    // Summarize the transcript
+    const aiResponse = await strict_output(
+      "You are an AI capable of summarising a YouTube transcript",
+      `Summarize in 250 words or less without including unrelated topics or sponsors. \n${transcript}`,
       { summary: "summary of the transcript" }
     );
 
+    const { summary }: { summary: string } = aiResponse;
+
+    // Generate questions from the transcript
     const questions = await getQuestionsFromTranscript(
       transcript,
       chapter.name
     );
 
+    if (!questions || questions.length === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Failed to generate questions",
+        },
+        { status: 500 }
+      );
+    }
+
+    // Create questions in the database
     await prisma.question.createMany({
       data: questions.map((question) => {
         let options = [
@@ -61,7 +96,7 @@ export async function POST(req: Request) {
           question.option2,
           question.option3,
         ];
-        options = options.sort(() => Math.random() - 0.5);
+        options = options.sort(() => Math.random() - 0.5); // Shuffle options
         return {
           question: question.question,
           answer: question.answer,
@@ -71,16 +106,24 @@ export async function POST(req: Request) {
       }),
     });
 
+    // Update the chapter with video ID and summary
     await prisma.chapter.update({
       where: { id: chapterId },
       data: {
-        videoId: videoId,
-        summary: summary,
+        videoId,
+        summary,
       },
     });
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.error("Error in POST /api/chapter/getInfo:", error);
+
+    // Additional logging for debugging
+    if (process.env.DATABASE_URL) {
+      console.log("DATABASE_URL:", process.env.DATABASE_URL);
+    }
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -89,14 +132,14 @@ export async function POST(req: Request) {
         },
         { status: 400 }
       );
-    } else {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "unknown",
-        },
-        { status: 500 }
-      );
     }
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Internal server error",
+      },
+      { status: 500 }
+    );
   }
 }
