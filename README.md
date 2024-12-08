@@ -48,9 +48,6 @@ To get started with the project locally, follow the steps below:
      cp .env.example .env
 
      ```
-
-For more detailed instructions on setting up the project, check the [Contributing Guide](https://chatgpt.com/c/CONTRIBUTING.md).
-
 ## Project Workflow
 
 - **Frontend**: The frontend is built using **Next.js** with **Tailwind CSS** for styling.
