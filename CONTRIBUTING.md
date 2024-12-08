@@ -1,3 +1,13 @@
+**package installation**
+
+```bash
+npm i
+
+or
+
+npm install
+```
+
 **Database Commands**
 
 ---

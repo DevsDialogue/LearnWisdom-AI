@@ -71,7 +71,7 @@ export async function POST(req: Request) {
       data: {
         name: title,
         image: course_image,
-        description: courseDescription.description, // Include description here
+        description: courseDescription.description,
       },
     });
 
@@ -113,7 +113,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid body" }, { status: 400 });
     }
 
-    console.error("Unexpected error:", error); // Log unexpected error details
+    console.error("Unexpected error:", error);
     return NextResponse.json(
       { error: "Internal Server Error", details: (error as Error).message },
       { status: 500 }
