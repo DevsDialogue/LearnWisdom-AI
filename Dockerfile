@@ -1,5 +1,8 @@
-# Stage 1: Build the application
-FROM node:alpine AS build
+# Use a Debian-based image
+FROM node:18-slim AS build
+
+# Update and install OpenSSL
+RUN apt-get update && apt-get install -y openssl
 
 WORKDIR /app
 
