@@ -48,6 +48,7 @@ To get started with the project locally, follow the steps below:
      cp .env.example .env
 
      ```
+
 ## Project Workflow
 
 - **Frontend**: The frontend is built using **Next.js** with **Tailwind CSS** for styling.
@@ -55,3 +56,5 @@ To get started with the project locally, follow the steps below:
 - **Payment Integration**: The project uses **Stripe** for managing payments for course creation and subscription services.
 
 ## CI/CD Workflow
+
+![CI/CD workflow]()
