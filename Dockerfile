@@ -1,28 +1,31 @@
-# Use a Debian-based image
-FROM node:18-slim AS build
-
-# Update and install OpenSSL
-RUN apt-get update && apt-get install -y openssl
+# ---------- Builder Stage ----------
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# Install dependencies only for production
+COPY package.json package-lock.json ./
+RUN npm ci
 
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application code
+# Copy necessary source files and build the application
 COPY . .
+RUN npm run build && npm prune --production && rm -rf .next/cache
 
-# Generate Prisma Client
-RUN npx prisma generate
+# ---------- Production Stage ----------
+FROM node:18-alpine AS production
 
-# Build the application
-RUN npm run build
+WORKDIR /app
 
-# Expose the desired port
+ENV NODE_ENV=production
+
+# Copy only production dependencies from builder stage
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+# Copy only necessary build files
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+
+# Expose the port and start the app
 EXPOSE 3000
-
-# Start the Next.js application
 CMD ["npm", "start"]

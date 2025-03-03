@@ -24,9 +24,7 @@ export async function POST(req: Request) {
 
     // Fetch the chapter with validation
     const chapter = await prisma.chapter.findUnique({
-      where: {
-        id: chapterId,
-      },
+      where: { id: chapterId },
     });
 
     if (!chapter) {
@@ -92,7 +90,7 @@ export async function POST(req: Request) {
       }
 
       // Begin database transaction
-      await prisma.$transaction(async (tx) => {
+      await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         // Create questions in the database
         await tx.question.createMany({
           data: questions.map((question) => {
@@ -156,7 +154,7 @@ export async function POST(req: Request) {
       console.log("Database URL format:", sanitizedUrl);
     }
 
-    // Handle specific error types
+    // Handle specific Prisma errors
     if (error instanceof Prisma.PrismaClientInitializationError) {
       return NextResponse.json(
         {
