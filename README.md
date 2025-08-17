@@ -1,60 +1,164 @@
-# Learn Wisdom AI
+<p align="center">
+  <img src="/Public/LearnWisdom-AI-Banner.png" alt="LearnWisdomAI Logo"/>
+</p>
 
-**Learn Wisdom AI** is an AI-powered SaaS content generation web application designed to generate personalized, structured courses based on topics chosen by users. The platform leverages the power of OpenAI as Client and OpenRouter API and integrates various tools for creating, managing, and monetizing educational content.
 
-## Demo
+> **Transform any topic into a complete learning experience with the power of AI**
 
-[]()
+An advanced AI-powered learning management system that automatically creates comprehensive courses with video content, intelligent summaries, and interactive quizzes - all from just a topic input.
 
-## Running with Docker
+## 🌟 Features
 
-To run the project locally using Docker, follow the steps below:
+### 🤖 **AI-Powered Course Generation**
+- **One-Click Course Creation**: Enter a topic, get a complete course structure
+- **Intelligent Content Curation**: Automatically sources relevant YouTube videos
+- **Smart Summarization**: AI-generated chapter summaries from video transcripts
+- **Interactive Quizzes**: Auto-generated multiple-choice questions for each chapter
 
-1. **Pull the docker image**
+### 💎 **Modern Learning Experience**
+- **Progress Tracking**: Real-time learning progress visualization
+- **Mobile-First Design**: Responsive interface that works everywhere
+- **Smooth Animations**: Polished UI with Framer Motion
+- **Multi-Language Support**: Transcript processing in multiple languages
 
-   ```bash
-   docker pull learnwisdom-ai
+### 💳 **Flexible Subscription Model**
+- **Free Tier**: 10 course generations to get started
+- **Pro Plan**: ₹4.99/month for unlimited courses
+- **Enterprise**: ₹17.49/month with advanced features
 
-   ```
+## 🚀 Quick Start
 
-2. **Run the Docker container:**
+### Prerequisites
+- Node.js 18+
+- PostgreSQL database
+- Docker (optional)
 
-   ```bash
-   docker run -p 3000:3000 learnwisdom-ai
+### Local Development
+```bash
+# Clone the repository
+git clone 
+cd learnwisdomai
 
-   ```
+# Install dependencies
+npm install
 
-The application should now be accessible on [http://localhost:3000](http://localhost:3000/).
+# Set up environment variables
+cp .env.example .env.local
+# Add your API keys and database URL
 
-## Setting up the project on your local machine
+# Run database migrations
+npx prisma migrate dev
+npx prisma generate
 
-To get started with the project locally, follow the steps below:
+# Start development server
+npm run dev
+```
 
-1. **[Install Dependencies:](/CONTRIBUTING.md)**
-1. **Run the Application:**
+### Docker Deployment
+```bash
+# Build and run with Docker Compose
+docker-compose up --build
 
-   - After setting up your environment, run the app with the following command:
+# The app will be available at http://localhost:3000
+```
 
-     ```bash
-     npm run dev
+## System Architecture
+![System Architecture](/Public/LearnWisdomAI-System-Architecture.png)
 
-     ```
 
-1. **Set up Environment Variables:**
+## Tech Stack
 
-   - Create a `.env` file using below command and add your actual environment variables:
+| Layer | Technology | Purpose |
+|-------|------------|---------|
+| **Frontend** | Next.js 15.4, React 18, TypeScript | Modern web application |
+| **Styling** | TailwindCSS, Radix UI, Framer Motion | Beautiful, responsive UI |
+| **Backend** | Node.js, Prisma ORM | API and database operations |
+| **Database** | PostgreSQL | Data persistence |
+| **Authentication** | NextAuth.js | Secure user management |
+| **AI/APIs** | Google Gemini, YouTube APIs, Unsplash | Content generation & sourcing |
+| **Payments** | Razorpay | Subscription management |
+| **DevOps** | Docker, Docker Compose | Containerized deployment |
 
-     ```bash
-     cp .env.example .env
+## Course Creation Flow
 
-     ```
+![Course Creation Flow](/Public/LearnWisdomAI-course-creation-flow.png)
 
-## Project Workflow
+## Database Schema
 
-- **Frontend**: The frontend is built using **Next.js** with **Tailwind CSS** for styling.
-- **Backend**: The backend uses **Prisma ORM** to interact with **PostgreSQL**, and **Supabase** serves as the backend platform.
-- **Payment Integration**: The project uses **Stripe** for managing payments for course creation and subscription services.
+<img src="/Public/LearnWisdomAI-Database-Schema.png" alt="Database Schema" width="500" />
 
-## CI/CD Workflow
+## Environment Variables
 
-![CI/CD workflow]()
+```env
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/learnwisdomai"
+
+# Authentication
+NEXTAUTH_SECRET="your-secret-key"
+NEXTAUTH_URL="http://localhost:3000"
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+
+# AI & APIs
+GEMINI_API_KEY="your-gemini-api-key"
+YOUTUBE_DATA_API_KEY="your-youtube-api-key"
+UNSPLASH_ACCESS_KEY="your-unsplash-key"
+
+# Payments
+RAZORPAY_KEY_ID="your-razorpay-key-id"
+RAZORPAY_KEY_SECRET="your-razorpay-secret"
+```
+
+## 🎯 Key Features in Detail
+
+### **Intelligent Course Generation**
+- Input any topic and desired number of units
+- AI creates detailed chapter breakdown
+- Automatically sources relevant educational videos
+- Generates comprehensive summaries from video transcripts
+
+### **Smart Content Processing**
+- Multi-language transcript support
+- Fallback content generation when transcripts unavailable
+- Context-aware quiz generation
+- Real-time progress tracking
+
+### **Subscription Management**
+- Credit-based system with usage tracking
+- Seamless Razorpay payment integration
+- Automatic feature unlocking based on subscription tier
+
+## 🚀 Deployment
+
+### Production with Docker
+```bash
+# Build production image
+docker build -t learnwisdomai .
+
+# Run with environment variables
+docker run -p 3000:3000 --env-file .env learnwisdomai
+```
+
+### Health Check
+The application includes health monitoring at `/api/health`
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+***
+
+
+
+**[🌐 Live Demo](learn-wisdom-ai.vercel.app) -  [🐛 Report Bug](https://github.com/yourusername/learnwisdomai/issues)**
+
+Made with ❤️ by [Your Name]
+
