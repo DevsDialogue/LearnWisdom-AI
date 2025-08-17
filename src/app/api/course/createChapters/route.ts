@@ -1,11 +1,20 @@
 import { NextResponse } from "next/server";
 import { createChaptersSchema } from "@/validators/course";
 import { ZodError } from "zod";
-import { strict_output } from "@/lib/gpt";
+import { strict_output } from "@/lib/gemini";
 import { getUnsplashImage } from "@/lib/unsplash";
 import { prisma } from "@/lib/db";
 import { getAuthSession } from "@/lib/auth";
 import { checkSubscription } from "@/lib/subscription";
+
+// Define proper types for AI responses
+interface ImageSearchResponse {
+  image_search_term: string;
+}
+
+interface CourseDescriptionResponse {
+  description: string;
+}
 
 export async function POST(req: Request) {
   try {
@@ -53,8 +62,13 @@ export async function POST(req: Request) {
       }
     );
 
+    // Fix: Handle array or object response from AI
+    const imageSearchTermObj = Array.isArray(imageSearchTerm) 
+      ? (imageSearchTerm[0] as ImageSearchResponse)
+      : (imageSearchTerm as ImageSearchResponse);
+
     const course_image = await getUnsplashImage(
-      imageSearchTerm.image_search_term
+      imageSearchTermObj.image_search_term
     );
 
     // Generate course description dynamically
@@ -66,21 +80,26 @@ export async function POST(req: Request) {
       }
     );
 
+    // Fix: Handle array or object response from AI
+    const courseDescriptionObj = Array.isArray(courseDescription)
+      ? (courseDescription[0] as CourseDescriptionResponse)
+      : (courseDescription as CourseDescriptionResponse);
+
     // Create the course in the database
     const course = await prisma.course.create({
       data: {
         name: title,
         image: course_image,
-        description: courseDescription.description,
+        description: courseDescriptionObj.description,
       },
     });
 
     // Create units and chapters
     for (const unit of output_units) {
-      const title = unit.title;
+      const unitTitle = unit.title;
       const prismaUnit = await prisma.unit.create({
         data: {
-          name: title,
+          name: unitTitle,
           courseId: course.id,
         },
       });

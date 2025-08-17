@@ -23,6 +23,9 @@ export const authoptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+  pages: {
+    signIn: "/auth/signin",
+  },
   callbacks: {
     jwt: async ({ token }) => {
       const db_user = await prisma.user.findFirst({
@@ -45,6 +48,21 @@ export const authoptions: NextAuthOptions = {
         session.user.credits = token.credits;
       }
       return session;
+    },
+    redirect: async ({ url, baseUrl }) => {
+      // Redirect to courses page after successful sign in
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      else if (new URL(url).origin === baseUrl) return url;
+      return `${baseUrl}/courses`;
+    },
+  },
+  events: {
+    createUser: async ({ user }) => {
+      // Give new users 10 free credits
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { credits: 10 },
+      });
     },
   },
   secret: process.env.NEXTAUTH_SECRET as string,

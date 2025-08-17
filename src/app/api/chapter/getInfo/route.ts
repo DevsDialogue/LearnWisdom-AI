@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { strict_output } from "@/lib/gpt";
+import { strict_output } from "@/lib/gemini";
 import {
   getQuestionsFromTranscript,
   getTranscript,
@@ -13,6 +13,11 @@ import { Prisma } from "@prisma/client";
 const bodyParser = z.object({
   chapterId: z.string(),
 });
+
+// Define the expected AI response type
+type AIResponse = {
+  summary: string;
+};
 
 export async function POST(req: Request) {
   try {
@@ -55,12 +60,12 @@ export async function POST(req: Request) {
     let transcript = await getTranscript(videoId);
     const maxLength = 500;
 
-    if (!transcript) {
+    if (!transcript || transcript.trim().length === 0) {
       return NextResponse.json(
         {
           success: false,
           error: "Transcript not found",
-          details: `No transcript available for video ID: ${videoId}`,
+          details: `No transcript available for video ID: ${videoId}. This might be because the video doesn't have captions or captions are not available in supported languages.`,
         },
         { status: 400 }
       );
@@ -77,7 +82,17 @@ export async function POST(req: Request) {
         { summary: "summary of the transcript" }
       );
 
-      const { summary } = aiResponse as { summary: string };
+      // Type guard to ensure aiResponse has the expected structure
+      if (!aiResponse || typeof aiResponse !== 'object' || !('summary' in aiResponse)) {
+        throw new Error("Invalid AI response format");
+      }
+
+      const { summary } = aiResponse as AIResponse;
+
+      // Validate that summary is a string
+      if (typeof summary !== 'string' || summary.trim().length === 0) {
+        throw new Error("Invalid summary generated");
+      }
 
       // Generate questions from the transcript
       const questions = await getQuestionsFromTranscript(
@@ -148,8 +163,8 @@ export async function POST(req: Request) {
     // Log database URL format (without credentials) in development
     if (process.env.NODE_ENV === "development" && process.env.DATABASE_URL) {
       const sanitizedUrl = process.env.DATABASE_URL.replace(
-        /(:\/\/)([^:]+):([^@]+)@/,
-        "$1[username]:[password]@"
+        /:\/\/([^:]+):([^@]+)@/,
+        "://[username]:[password]@"
       );
       console.log("Database URL format:", sanitizedUrl);
     }

@@ -1,11 +1,6 @@
-import { Configuration, OpenAIApi } from "openai";
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const configuration = new Configuration({
-  apiKey: process.env.OPENROUTER_API_KEY,
-  basePath: "https://openrouter.ai/api/v1",
-});
-
-const openai = new OpenAIApi(configuration);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 interface OutputFormat {
   [key: string]: string | string[] | OutputFormat;
@@ -17,8 +12,8 @@ export async function strict_output(
   output_format: OutputFormat,
   default_category: string = "",
   output_value_only: boolean = false,
-  model: string = "gpt-3.5-turbo",
-  temperature: number = 1,
+  model: string = "gemini-1.5-flash",
+  temperature: number = 0.7,
   num_tries: number = 3,
   verbose: boolean = false
 ) {
@@ -46,56 +41,76 @@ export async function strict_output(
         output_format_prompt += `\nGenerate an array of JSON, one JSON for each input element.`;
       }
 
-      const response = await openai.createChatCompletion({
-        temperature,
+      // Add specific instruction to return only JSON without markdown
+      output_format_prompt += `\nReturn ONLY the JSON response without any markdown formatting, code blocks, or additional text.`;
+
+      const model_instance = genAI.getGenerativeModel({ 
         model,
-        messages: [
-          {
-            role: "system",
-            content: system_prompt + output_format_prompt + error_msg,
-          },
-          {
-            role: "user",
-            content: Array.isArray(user_prompt)
-              ? user_prompt.join("\n")
-              : user_prompt,
-          },
-        ],
+        generationConfig: {
+          temperature,
+          maxOutputTokens: 8192,
+        }
       });
 
-      if (!response?.data?.choices?.[0]?.message?.content) {
-        throw new Error("Invalid response structure from OpenAI");
-      }
+      const full_prompt = system_prompt + output_format_prompt + error_msg + "\n\n" + 
+        (Array.isArray(user_prompt) ? user_prompt.join("\n") : user_prompt);
 
-      const res = response.data.choices[0].message.content.trim();
+      const result = await model_instance.generateContent(full_prompt);
+      const response = await result.response;
+      const res = response.text().trim();
 
       if (!res) {
-        throw new Error("Empty response from OpenAI");
+        throw new Error("Empty response from Gemini");
       }
 
       if (verbose) {
-        console.log(
-          "System prompt:",
-          system_prompt + output_format_prompt + error_msg
-        );
+        console.log("System prompt:", system_prompt + output_format_prompt + error_msg);
         console.log("\nUser prompt:", user_prompt);
-        console.log("\nGPT response:", res);
+        console.log("\nGemini response:", res);
       }
 
-      const sanitizedRes = res.replace(/\\([\"\\])/g, "$1");
+      // Enhanced JSON extraction to handle markdown code blocks and other formats
+      let sanitizedRes = res;
+      
+      // Try to extract JSON from markdown code blocks first
+      const codeBlockMatch = res.match(/``````/);
+      if (codeBlockMatch) {
+        sanitizedRes = codeBlockMatch[1].trim();
+      } else {
+        // Try to find JSON object/array patterns
+        const jsonMatch = res.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+        if (jsonMatch) {
+          sanitizedRes = jsonMatch[1].trim();
+        }
+      }
+
+      // Clean up any remaining formatting issues
+      sanitizedRes = sanitizedRes
+        .replace(/\\n/g, '\n')
+        .replace(/\\"/g, '"')
+        .replace(/\\t/g, '\t');
+
       let output;
       try {
         output = JSON.parse(sanitizedRes);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (e) {
-        throw new Error(`Failed to parse GPT response: ${sanitizedRes}`);
+      } catch (parseError) {
+        // If JSON parsing fails, try cleaning the response more aggressively
+        const cleanedRes = sanitizedRes
+          .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
+          .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
+          .trim();
+
+        try {
+          output = JSON.parse(cleanedRes);
+        } catch (secondParseError) {
+          throw new Error(`Failed to parse Gemini response after cleaning. Original: "${res}", Sanitized: "${sanitizedRes}", Cleaned: "${cleanedRes}"`);
+        }
       }
 
       if (list_input && !Array.isArray(output)) {
         output = [output];
       }
 
-      // Validate and process the output
       const processedOutput = Array.isArray(output) ? output : [output];
 
       const validatedOutput = processedOutput.map((item) => {
@@ -115,7 +130,7 @@ export async function strict_output(
               : processedItem[key];
 
             if (typeof value === "string" && value.includes(":")) {
-              value = value.split(":")[0];
+              value = value.split(":");
             }
 
             processedItem[key] = choices.includes(value)
@@ -131,10 +146,10 @@ export async function strict_output(
           : processedItem;
       });
 
-      return list_input ? validatedOutput : validatedOutput[0];
+      return list_input ? validatedOutput : validatedOutput;
     } catch (e) {
       console.error(`Attempt ${i + 1} failed:`, e);
-      error_msg = `\n\nPrevious error: ${e instanceof Error ? e.message : "Unknown error"}. Please fix this error and try again.`;
+      error_msg = `\n\nPrevious error: ${e instanceof Error ? e.message : "Unknown error"}. Please fix this error and return valid JSON without any markdown formatting.`;
 
       if (i === num_tries - 1) {
         console.error("All attempts failed");

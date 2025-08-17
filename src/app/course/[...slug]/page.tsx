@@ -8,13 +8,17 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 type Props = {
-  params: {
+  params: Promise<{
     slug: string[];
-  };
+  }>;
 };
 
-const CoursePage = async ({ params: { slug } }: Props) => {
+const CoursePage = async ({ params }: Props) => {
+  // Await the params in Next.js 15
+  const { slug } = await params;
+  
   const [courseId, unitIndexParam, chapterIndexParam] = slug;
+  
   const course = await prisma.course.findUnique({
     where: { id: courseId },
     include: {
@@ -27,9 +31,11 @@ const CoursePage = async ({ params: { slug } }: Props) => {
       },
     },
   });
+  
   if (!course) {
     return redirect("/gallery");
   }
+  
   const unitIndex = parseInt(unitIndexParam);
   const chapterIndex = parseInt(chapterIndexParam);
 
@@ -37,15 +43,18 @@ const CoursePage = async ({ params: { slug } }: Props) => {
   if (!unit) {
     return redirect("/gallery");
   }
+  
   const chapter = unit.chapters[chapterIndex];
   if (!chapter) {
     return redirect("/gallery");
   }
+  
   const nextChapter = unit.chapters[chapterIndex + 1];
   const prevChapter = unit.chapters[chapterIndex - 1];
+  
   return (
     <div>
-      <CourseSideBar course={course} currentChapterId={chapter.id} />;
+      <CourseSideBar course={course} currentChapterId={chapter.id} />
       <div>
         <div className="ml-[400px] px-8">
           <div className="flex">

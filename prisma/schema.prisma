@@ -13,17 +13,17 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String?
-  access_token      String?
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?
+  id_token          String? @db.Text
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-  @@index([userId], map: "sessionUserId")
 }
 
 model Session {
@@ -32,8 +32,6 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId], map: "userId")
 }
 
 model User {
@@ -45,55 +43,74 @@ model User {
   credits       Int       @default(10)
   accounts      Account[]
   sessions      Session[]
+  
+  userSubscription UserSubscription?
+}
+
+model UserSubscription {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Razorpay fields
+  razorpayPaymentId    String?
+  razorpayOrderId      String?
+  razorpaySignature    String?
+  
+  plan                 String   @default("free") // free, pro, enterprise
+  isActive             Boolean  @default(false)
+  currentPeriodEnd     DateTime?
+  
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }
 
 model Course {
   id          String @id @default(cuid())
   name        String
   image       String
-  description String
+  description String?
   units       Unit[]
 }
 
 model Unit {
-  id       String    @id @default(cuid())
-  courseId String
-  name     String
-  chapters Chapter[]
-  course   Course    @relation(fields: [courseId], references: [id])
+  id        String    @id @default(cuid())
+  courseId  String
+  course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  name      String
+  chapters  Chapter[]
 
-  @@index([courseId], map: "courseId")
+  @@index([courseId], name: "Unit_courseId_idx")
 }
 
 model Chapter {
   id                 String     @id @default(cuid())
   unitId             String
+  unit               Unit       @relation(fields: [unitId], references: [id], onDelete: Cascade)
   name               String
   youtubeSearchQuery String
   videoId            String?
   summary            String?    @db.VarChar(3000)
-  unit               Unit       @relation(fields: [unitId], references: [id])
   questions          Question[]
 
-  @@index([unitId], map: "unitId")
+  @@index([unitId], name: "Chapter_unitId_idx")
 }
 
 model Question {
   id        String  @id @default(cuid())
   chapterId String
+  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   question  String  @db.VarChar(3000)
   answer    String  @db.VarChar(3000)
   options   String  @db.VarChar(3000)
-  chapter   Chapter @relation(fields: [chapterId], references: [id])
 
-  @@index([chapterId], map: "chapterId")
+  @@index([chapterId], name: "Question_chapterId_idx")
 }
 
-model UserSubscription {
-  id                     String    @id @default(cuid())
-  userId                 String    @unique
-  stripeCustomerId       String    @unique @map("stripe_customer_id")
-  stripeSubscriptionId   String?   @unique @map("stripe_subscription_id")
-  stripePriceId          String?   @map("stripe_price_id")
-  stripeCurrentPeriodEnd DateTime? @map("stripe_current_period_end")
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }

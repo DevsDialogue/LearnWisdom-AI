@@ -6,16 +6,20 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 type Props = {
-  params: {
+  params: Promise<{
     courseId: string;
-  };
+  }>;
 };
 
-const CreateChapters = async ({ params: { courseId } }: Props) => {
+const CreateChapters = async ({ params }: Props) => {
+  // Await the params in Next.js 15
+  const { courseId } = await params;
+  
   const session = await getAuthSession();
   if (!session?.user) {
     return redirect("/gallery");
   }
+  
   const course = await prisma.course.findUnique({
     where: {
       id: courseId,
@@ -28,9 +32,11 @@ const CreateChapters = async ({ params: { courseId } }: Props) => {
       },
     },
   });
+  
   if (!course) {
     return redirect("/create");
   }
+  
   return (
     <div className="flex flex-col items-start max-w-xl mx-auto my-16">
       <h5 className="text-sm uppercase text-seconday-foreground/60">

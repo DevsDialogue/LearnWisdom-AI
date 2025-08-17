@@ -12,7 +12,7 @@ const SubscriptionAction = () => {
   const handleSubscribe = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/api/stripe");
+      const response = await axios.get("/api/razorpay/create-order");
       window.location.href = response.data.url;
     } catch (error) {
       console.log("error", error);

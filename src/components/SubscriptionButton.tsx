@@ -10,10 +10,10 @@ const SubscriptionButton = ({ isPro }: Props) => {
   const handleSubscribe = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/api/stripe");
+      const response = await axios.get("/api/razorpay/create-order");
       window.location.href = response.data.url;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
+    } catch {
+      // Remove unused 'error' parameter
       console.log("billing error");
     } finally {
       setLoading(false);
