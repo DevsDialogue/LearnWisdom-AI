@@ -128,5 +128,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ***
 
-**[🌐 Live Demo]([learn-wisdom-ai.vercel.app](https://learn-wisdom-ai-m8wv.vercel.app/)) -  [🐛 Report Bug](https://github.com/DevsDialogue/learnwisdomai/issues)**
+**[🌐 Live Demo](https://learn-wisdom-ai-m8wv.vercel.app/) -  [🐛 Report Bug](https://github.com/DevsDialogue/learnwisdomai/issues)**
 
