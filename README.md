@@ -35,15 +35,16 @@ An advanced AI-powered learning management system that automatically creates com
 
 ### Local Development
 ```bash
-# Clone the repository
-git clone 
-cd learnwisdomai
+# Fork and Clone the repository
+git clone www.github.com/yourusername/learnwisdomai.git
+
+cd learnwisdom-ai
 
 # Install dependencies
 npm install
 
 # Set up environment variables
-cp .env.example .env.local
+cp .env.example .env
 # Add your API keys and database URL
 
 # Run database migrations
@@ -54,13 +55,20 @@ npx prisma generate
 npm run dev
 ```
 
-### Docker Deployment
-```bash
-# Build and run with Docker Compose
-docker-compose up --build
+## Running with Docker 🐳
 
-# The app will be available at http://localhost:3000
+### Production with Docker
+> NOTE: You should have downloaded the `Docker Desktop`: [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/)
+
+### Build and run with Docker Compose
+
+```bash
+# Build production image
+docker compose up --build
 ```
+
+Acess the app at [http://localhost:3000](http://localhost:3000)
+
 
 ## System Architecture
 ![System Architecture](/Public/LearnWisdomAI-System-Architecture.png)
@@ -87,29 +95,7 @@ docker-compose up --build
 
 <img src="/Public/LearnWisdomAI-Database-Schema.png" alt="Database Schema" width="500" />
 
-## Environment Variables
-
-```env
-# Database
-DATABASE_URL="postgresql://user:password@localhost:5432/learnwisdomai"
-
-# Authentication
-NEXTAUTH_SECRET="your-secret-key"
-NEXTAUTH_URL="http://localhost:3000"
-GOOGLE_CLIENT_ID="your-google-client-id"
-GOOGLE_CLIENT_SECRET="your-google-client-secret"
-
-# AI & APIs
-GEMINI_API_KEY="your-gemini-api-key"
-YOUTUBE_DATA_API_KEY="your-youtube-api-key"
-UNSPLASH_ACCESS_KEY="your-unsplash-key"
-
-# Payments
-RAZORPAY_KEY_ID="your-razorpay-key-id"
-RAZORPAY_KEY_SECRET="your-razorpay-secret"
-```
-
-## 🎯 Key Features in Detail
+## Key Features in Detail
 
 ### **Intelligent Course Generation**
 - Input any topic and desired number of units
@@ -128,20 +114,6 @@ RAZORPAY_KEY_SECRET="your-razorpay-secret"
 - Seamless Razorpay payment integration
 - Automatic feature unlocking based on subscription tier
 
-## 🚀 Deployment
-
-### Production with Docker
-```bash
-# Build production image
-docker build -t learnwisdomai .
-
-# Run with environment variables
-docker run -p 3000:3000 --env-file .env learnwisdomai
-```
-
-### Health Check
-The application includes health monitoring at `/api/health`
-
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -156,9 +128,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ***
 
-
-
 **[🌐 Live Demo](learn-wisdom-ai.vercel.app) -  [🐛 Report Bug](https://github.com/yourusername/learnwisdomai/issues)**
-
-Made with ❤️ by [Your Name]
 
